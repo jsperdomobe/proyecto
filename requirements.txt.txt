@@ -1,0 +1,14 @@
+flask
+flask-cors
+dash
+dash-bootstrap-components
+pandas
+numpy
+scikit-learn
+seaborn
+matplotlib
+joblib
+catboost
+xgboost
+lightgbm
+plotly
