@@ -204,7 +204,7 @@ def update_output(n_clicks, gender, age, profession, academic_pressure, work_pre
         # Recopilar los datos del formulario
         responses = {
             "Gender": gender,
-            "CGPA":8,
+            
             "Job Satisfaction":3, 
             "Dietary Habits":"Moderate", 
             "Profession":"Teacher", 
@@ -219,6 +219,7 @@ def update_output(n_clicks, gender, age, profession, academic_pressure, work_pre
             "Academic Pressure": academic_pressure,
             "Work Pressure": work_pressure,
             "Sleep Duration": sleep_hours,
+            "CGPA":5,
             "Have you ever had suicidal thoughts ?": suicidal_thoughts[0] if suicidal_thoughts else "No"  # Se toma el primer valor si está presente
         }
 
