@@ -17,7 +17,6 @@ def predict():
         # Asegúrate de que los valores de las características están en el formato que el modelo espera
         features = [
             data['Gender'],
-            data['CGPA'],
             data['Job Satisfaction'], 
             data['Dietary Habits'], 
             data['Profession'], 
@@ -30,6 +29,7 @@ def predict():
             data['Age'], 
             data['Working Professional or Student'], 
             data['Academic Pressure'],
+            data['CGPA'],            
             data['Work Pressure'], 
             data['Sleep Duration'], 
             data['Have you ever had suicidal thoughts ?']
