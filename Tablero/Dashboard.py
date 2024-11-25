@@ -207,16 +207,26 @@ def update_output(n_clicks, gender, age, profession, academic_pressure, work_pre
         # Recopilar los datos del formulario
         responses = {
             "Gender": gender,
+            "CGPA":8,
+            "Job Satisfaction":3, 
+            "Dietary Habits":"Moderate", 
+            "Profession":"Teacher", 
+            "Financial Stress":3, 
+            "City":"Delhi", 
+            "Work/Study Hours":10, 
+            "Study Satisfaction":3, 
+            "Family History of Mental Illness":"No", 
+            "Degree":"MA",            
             "Age": age,
-            "Profession": profession,
+            "Working Professional or Student": profession,
             "Academic Pressure": academic_pressure,
             "Work Pressure": work_pressure,
-            "Sleep Hours": sleep_hours,
-            "Suicidal Thoughts": suicidal_thoughts[0] if suicidal_thoughts else "No"  # Se toma el primer valor si está presente
+            "Sleep Duration": sleep_hours,
+            "Have you ever had suicidal thoughts ?": suicidal_thoughts[0] if suicidal_thoughts else "No"  # Se toma el primer valor si está presente
         }
 
         # URL de la API (la IP de la instancia EC2 puede cambiar)
-        api_url = "http://3.86.138.192:5000/predict"  # Cambia esta URL si es necesario
+        api_url = "http://54.87.237.169:5000/predict"  # Cambia esta URL si es necesario
 
         try:
             # Hacer la solicitud POST a la API
