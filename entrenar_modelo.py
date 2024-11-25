@@ -54,8 +54,8 @@ model = VotingClassifier(estimators=[
     ('Logistic Regression', LR),
     ('Decision Tree', Tree),
     ('Random Forest', RF),
-    ('Support Vector Machine', SVM)
-], voting='hard')
+    ('Support Vector Machine', SVC(probability=True))
+], voting='soft')
 
 # Crear el pipeline que incluye el preprocesador y el modelo
 pipeline = Pipeline(steps=[('preprocessor', preprocessor), ('model', model)])
