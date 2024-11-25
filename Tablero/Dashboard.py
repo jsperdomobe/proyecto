@@ -52,7 +52,6 @@ app.layout = dbc.Container([
                                 options=[
                                     {'label': 'Masculino', 'value': 'Male'},
                                     {'label': 'Femenino', 'value': 'Female'},
-                                    {'label': 'Otro', 'value': 'O'}
                                 ],
                                 placeholder="Selecciona Género"
                             ),
@@ -60,9 +59,11 @@ app.layout = dbc.Container([
                             dcc.Dropdown(
                                 id='age-dropdown',
                                 options=[
-                                    {'label': '18-25', 'value': '18-25'},
-                                    {'label': '26-35', 'value': '26-35'},
-                                    {'label': '36-45', 'value': '36-45'},
+                                    {'label': '18-25', 'value': '18'},
+                                    {'label': '26-35', 'value': '26'},
+                                    {'label': '36-45', 'value': '36'},
+                                    {'label': '45-60', 'value': '36'},
+                                    {'label': 'mas de 60', 'value': '60'},
                                 ],
                                 placeholder="Selecciona Edad"
                             ),
@@ -71,8 +72,8 @@ app.layout = dbc.Container([
                                 id='profession-radio',
                                 options=[
                                     {'label': 'Estudiante', 'value': 'student'},
-                                    {'label': 'Trabajador', 'value': 'worker'},
-                                    {'label': 'Otro', 'value': 'other'}
+                                    {'label': 'Trabajador', 'value': 'Working Professional'},
+                                    
                                 ],
                                 inline=True,
                                 style={'color': 'white'}
@@ -92,10 +93,10 @@ app.layout = dbc.Container([
                             dcc.Dropdown(
                                 id='sleep-dropdown',
                                 options=[
-                                    {'label': 'Menos de 4 horas', 'value': '<4'},
-                                    {'label': '4-6 horas', 'value': '4-6'},
-                                    {'label': '6-8 horas', 'value': '6-8'},
-                                    {'label': 'Más de 8 horas', 'value': '>8'}
+                                    {'label': 'Menos de 5 horas', 'value': 'Less than 5 hours'},
+                                    {'label': '5-6 horas', 'value': '5-6 hours'},
+                                    {'label': '6-8 horas', 'value': '7-8 hours'},
+                                    {'label': 'Más de 8 horas', 'value': 'More than 8 hours'}
                                 ],
                                 placeholder="Selecciona Horas de Sueño"
                             ),
@@ -105,8 +106,8 @@ app.layout = dbc.Container([
                             dbc.Label("Pensamientos suicidas", style={'color': 'white'}),
                             dcc.Checklist(
                                 id='suicidal-thoughts-checklist',
-                                options=[{'label': "SI", 'value': 'YES'},
-                                         {'label': "NO", 'value': 'NO'}],
+                                options=[{'label': "SI", 'value': 'Yes'},
+                                         {'label': "NO", 'value': 'No'}],
                                 inline=True
                             ),
                             dbc.Button("Guardar Respuestas", id='submit-button', n_clicks=0)
@@ -199,9 +200,11 @@ import requests
     Input('sleep-dropdown', 'value'),
     Input('suicidal-thoughts-checklist', 'value')
 )
+
+
 def update_output(n_clicks, gender, age, profession, academic_pressure, work_pressure, sleep_hours, suicidal_thoughts):
     if n_clicks > 0:
-        # Crear un diccionario con las respuestas del formulario
+        # Recopilar los datos del formulario
         responses = {
             "Gender": gender,
             "Age": age,
@@ -209,25 +212,35 @@ def update_output(n_clicks, gender, age, profession, academic_pressure, work_pre
             "Academic Pressure": academic_pressure,
             "Work Pressure": work_pressure,
             "Sleep Hours": sleep_hours,
-            "Suicidal Thoughts": suicidal_thoughts
+            "Suicidal Thoughts": suicidal_thoughts[0] if suicidal_thoughts else "No"  # Se toma el primer valor si está presente
         }
 
+        # URL de la API (la IP de la instancia EC2 puede cambiar)
+        api_url = "http://3.86.138.192:5000/predict"  # Cambia esta URL si es necesario
+
         try:
-            # Enviar las respuestas a la API para obtener la predicción
-            api_url = "http://3.86.138.192:5000/predict"  # IP pública de EC2
+            # Hacer la solicitud POST a la API
             response = requests.post(api_url, json=responses)
 
-            # Verifica si la respuesta fue exitosa
+            # Verificar si la respuesta fue exitosa
             response.raise_for_status()
 
-            # Obtener la predicción de la API
-            prediction = response.json().get('prediction', 'No disponible')
+            # Obtener la probabilidad de la predicción
+            prediction_prob = response.json().get('prediction', 0)
 
-            return f"Respuestas guardadas. Predicción: {prediction}"
+            # Mostrar el mensaje en función de la probabilidad
+            if prediction_prob > 0.5:
+                return html.Div([
+                    html.P("Tienes una alta probabilidad de sufrir una enfermedad mental. Por favor contacta con un especialista.", style={'color': 'red', 'fontWeight': 'bold'}),
+                    html.P(f"Probabilidad calculada: {prediction_prob:.2f}", style={'color': 'white'})
+                ])
+            else:
+                return html.P(f"Probabilidad calculada: {prediction_prob:.2f}. No hay indicios significativos.", style={'color': 'white'})
 
         except requests.exceptions.RequestException as e:
             return f"Error al conectar con la API: {e}"
 
     return "Presione 'Guardar Respuestas' para guardar sus respuestas."
+
 if __name__ == '__main__':
-    app.run_server(debug=True)
+    app.run_server(debug=True, host='0.0.0.0', port=8050)
