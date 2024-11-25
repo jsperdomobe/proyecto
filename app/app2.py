@@ -5,7 +5,7 @@ import numpy as np
 app = Flask(__name__)
 
 # Cargar el modelo entrenado
-modelo = joblib.load('modelo_entrenado.pkl')  # Ruta del modelo preentrenado
+modelo = joblib.load('modelo_voting_classifier.pkl')  # Ruta del modelo preentrenado
 
 @app.route('/predict', methods=['POST'])
 def predict():
