@@ -224,7 +224,7 @@ def update_output(n_clicks, gender, age, profession, academic_pressure, work_pre
         }
 
         # URL de la API (la IP de la instancia EC2 puede cambiar)
-        api_url = "http://54.87.237.169:5000/predict"  # Cambia esta URL si es necesario
+        api_url = "http://18.233.167.223:5000/predict"  # Cambia esta URL si es necesario
 
         try:
             # Hacer la solicitud POST a la API
