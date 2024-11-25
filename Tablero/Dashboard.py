@@ -6,9 +6,6 @@ Original file is located at
     https://colab.research.google.com/drive/1QZjgCwLJIFglxKbwrHmoq9C0TgSeOE1R
 """
 
-pip install dash
-
-pip install dash-bootstrap-components
 
 ###############################33
 import dash
