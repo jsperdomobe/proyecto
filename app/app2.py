@@ -16,13 +16,23 @@ def predict():
         # Preprocesamiento: Convertir los datos a un formato adecuado para el modelo
         # Asegúrate de que los valores de las características están en el formato que el modelo espera
         features = [
-            data['Gender'], 
-            data['Age'], 
+            data['Gender'],
+            data['CGPA'],
+            data['Job Satisfaction'], 
+            data['Dietary Habits'], 
             data['Profession'], 
+            data['Financial Stress'], 
+            data['City'], 
+            data['Work/Study Hours'], 
+            data['Study Satisfaction'], 
+            data['Family History of Mental Illness'], 
+            data['Degree'],
+            data['Age'], 
+            data['Working Professional or Student'], 
             data['Academic Pressure'],
             data['Work Pressure'], 
-            data['Sleep Hours'], 
-            data['Suicidal Thoughts']
+            data['Sleep Duration'], 
+            data['Have you ever had suicidal thoughts ?']
         ]
         
         # Convertir características en el formato correcto para la predicción
