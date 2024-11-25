@@ -1,51 +1,44 @@
 from flask import Flask, request, jsonify
 import joblib
-import pandas as pd
+import numpy as np
 
-# Inicializar la aplicación Flask
 app = Flask(__name__)
 
-# Cargar el modelo previamente guardado
-try:
-    model = joblib.load('modelo_voting_classifier.pkl')  # Asegúrate de que el archivo esté en el mismo directorio
-    print("Modelo cargado exitosamente.")
-except Exception as e:
-    print(f"Error al cargar el modelo: {e}")
-    model = None
+# Cargar el modelo entrenado
+modelo = joblib.load('modelo_entrenado.pkl')  # Ruta del modelo preentrenado
 
-# Endpoint para predecir
 @app.route('/predict', methods=['POST'])
 def predict():
-    if model is None:
-        return jsonify({"error": "Modelo no cargado"}), 500
-
     try:
-        # Obtener los datos de la solicitud en formato JSON
+        # Recibir los datos en formato JSON
         data = request.get_json()
 
-        # Asegurarse de que los datos contengan las claves necesarias
-        required_keys = ["Gender", "Age", "Profession", "Academic Pressure", "Work Pressure", "Sleep Hours", "Suicidal Thoughts"]
-        for key in required_keys:
-            if key not in data:
-                return jsonify({"error": f"Falta el campo {key}"}), 400
-
-        # Convertir los datos a un DataFrame (esto puede depender de tu modelo y cómo lo entrenaste)
-        input_data = pd.DataFrame([data])
+        # Preprocesamiento: Convertir los datos a un formato adecuado para el modelo
+        # Asegúrate de que los valores de las características están en el formato que el modelo espera
+        features = [
+            data['Gender'], 
+            data['Age'], 
+            data['Profession'], 
+            data['Academic Pressure'],
+            data['Work Pressure'], 
+            data['Sleep Hours'], 
+            data['Suicidal Thoughts']
+        ]
+        
+        # Convertir características en el formato correcto para la predicción
+        # Dependiendo del modelo, esto podría incluir transformaciones adicionales
+        # Si el modelo espera que las variables categóricas estén codificadas, por ejemplo, con One-Hot Encoding,
+        # deberías realizar esos cambios antes de hacer la predicción.
 
         # Realizar la predicción
-        prediction = model.predict(input_data)[0]  # Asegúrate de que tu modelo use esta forma de predicción
+        prediction_prob = modelo.predict_proba([features])[0][1]  # Usar probabilidad de la clase positiva
 
-        # Devolver la predicción en formato JSON
-        return jsonify({"prediction": prediction})
+        # Retornar la probabilidad como respuesta
+        return jsonify({"prediction": prediction_prob})
 
     except Exception as e:
-        return jsonify({"error": f"Error al procesar la solicitud: {e}"}), 500
+        return jsonify({"error": str(e)}), 400
 
-# Ruta principal para probar si la API está en funcionamiento
-@app.route('/')
-def home():
-    return "La API está corriendo correctamente."
-
-# Iniciar el servidor
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    app.run(debug=True, host='0.0.0.0', port=5000)
+
